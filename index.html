@@ -1,3 +1,505 @@
-<h1> Hello my page is hosted</h1>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Introduction to Python Programming (102040306) - Course Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B2A6B;
+  --navy-light: #2c3e8c;
+  --amber: #E8A200;
+  --bg: #f4f6fa;
+  --card: #ffffff;
+  --ink: #1d2433;
+  --text-muted: #64748b;
+  --line: #e2e8f0;
+  --accent-green: #10b981;
+  --accent-red: #ef4444;
+  --shadow: 0 4px 18px rgba(27, 42, 107, 0.06);
+}
 
-<p> akanksha kumari</p>
+[data-theme="dark"] {
+  --navy: #60a5fa;
+  --navy-light: #3b82f6;
+  --amber: #fbbf24;
+  --bg: #0f172a;
+  --card: #1e293b;
+  --ink: #f1f5f9;
+  --text-muted: #94a3b8;
+  --line: #334155;
+  --shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.6;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:focus, button:focus { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+header {
+  background: linear-gradient(135deg, #1B2A6B 0%, #0d163d 100%);
+  color: #fff;
+  padding: 36px 20px;
+}
+header .w, main, footer .w { max-width: 1020px; margin: auto; }
+header h1 { margin: 0 0 6px; font-size: 1.9rem; font-weight: 700; letter-spacing: -0.02em; }
+header p { margin: 4px 0; opacity: 0.9; font-size: 0.95rem; }
+
+.header-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.theme-btn {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.2s ease;
+}
+.theme-btn:hover { background: rgba(255,255,255,0.25); }
+
+nav {
+  background: var(--card);
+  border-bottom: 2px solid var(--amber);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+nav ul {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0 12px;
+  max-width: 1020px;
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+nav a {
+  display: inline-block;
+  padding: 14px 14px;
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+nav a:hover {
+  color: var(--amber);
+  background: rgba(232, 162, 0, 0.08);
+  border-bottom-color: var(--amber);
+  text-decoration: none;
+}
+
+main { padding: 16px 20px 48px; }
+section { margin: 36px 0; }
+h2 {
+  color: var(--navy);
+  border-bottom: 2px solid var(--amber);
+  padding-bottom: 6px;
+  font-size: 1.45rem;
+  margin-bottom: 16px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 14px 0;
+  box-shadow: var(--shadow);
+}
+
+.grid-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.metric-box {
+  background: rgba(27, 42, 107, 0.04);
+  border-left: 4px solid var(--amber);
+  padding: 12px;
+  border-radius: 4px;
+}
+.metric-box strong { display: block; font-size: 0.85rem; color: var(--text-muted); }
+.metric-box span { font-size: 1.15rem; font-weight: 700; color: var(--ink); }
+
+.faculty-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.faculty-badge.online { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green); }
+.faculty-badge.offline { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid var(--accent-red); }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot.online { background: var(--accent-green); animation: pulse 1.6s infinite; }
+.dot.offline { background: var(--accent-red); }
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.search-input {
+  width: 100%;
+  max-width: 360px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+.search-input:focus { outline: 2px solid var(--amber); }
+
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; background: var(--card); font-size: 0.92rem; }
+th, td { border: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: #1B2A6B; color: #fff; }
+[data-theme="dark"] th { background: #1e293b; color: #93c5fd; }
+tr:hover td { background: rgba(232, 162, 0, 0.05); }
+
+/* Python Interactive Lab */
+.playground-box {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px;
+}
+.code-area {
+  width: 100%;
+  height: 120px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #0b1120;
+  color: #38bdf8;
+  resize: vertical;
+}
+.btn-run {
+  background: var(--amber);
+  color: #1a1a1a;
+  border: none;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+.btn-run:hover { opacity: 0.9; }
+.output-box {
+  background: #020617;
+  color: #4ade80;
+  font-family: 'Fira Code', monospace;
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 10px;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  min-height: 40px;
+}
+
+footer {
+  background: var(--card);
+  border-top: 1px solid var(--line);
+  padding: 24px 16px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="w">
+    <div class="header-top">
+      <div>
+        <h1>Introduction to Python Programming</h1>
+        <p>Course Code: <strong>102040306</strong> &middot; B.Tech (Computer Science &amp; Design), Semester III</p>
+        <p>Faculty of Engineering &amp; Technology, GCET &middot; CVM University</p>
+      </div>
+      <button class="theme-btn" id="themeToggle" aria-label="Toggle theme">🌓 Theme</button>
+    </div>
+  </div>
+</header>
+
+<nav aria-label="Page sections">
+  <ul>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#contact">Faculty &amp; Hours</a></li>
+    <li><a href="#outcomes">Outcomes</a></li>
+    <li><a href="#schedule">Schedule</a></li>
+    <li><a href="#assessment">Assessment</a></li>
+    <li><a href="#playground">Interactive Lab</a></li>
+    <li><a href="#resources">Resources</a></li>
+  </ul>
+</nav>
+
+<main>
+  <!-- Course Overview -->
+  <section id="overview">
+    <h2>Course Overview</h2>
+    <div class="card">
+      <p>This course introduces Python as a simple, powerful, and versatile language. Students build core programming paradigms, algorithmic thinking, and systematic problem-solving skills through data abstractions, modular functions, file streaming, and object-oriented architectures.</p>
+      <div class="grid-metrics">
+        <div class="metric-box">
+          <strong>Weekly Load</strong>
+          <span>2L + 2P hrs</span>
+        </div>
+        <div class="metric-box">
+          <strong>Credits</strong>
+          <span>3.0</span>
+        </div>
+        <div class="metric-box">
+          <strong>Total Marks</strong>
+          <span>150 Marks</span>
+        </div>
+        <div class="metric-box">
+          <strong>Evaluation</strong>
+          <span>Theory 100 | Practical 50</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Faculty & Contact (Dynamic Status) -->
+  <section id="contact">
+    <h2>Course Faculty &amp; Office Hours</h2>
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <h3 style="margin: 0; font-size: 1.25rem;">Akanksha Kumari</h3>
+        <div id="statusBadge" class="faculty-badge offline">
+          <span class="dot offline"></span>
+          <span id="statusText">Checking office hours...</span>
+        </div>
+      </div>
+      <p style="margin: 8px 0 16px; color: var(--text-muted);">Assistant Professor &middot; Department of Computer Science and Design</p>
+      
+      <p><strong>Email:</strong> <a href="mailto:akanksha.kumari@cvmu.edu.in?subject=[Course 102040306] Student Query">akanksha.kumari@cvmu.edu.in</a></p>
+      <p><strong>Official Office Hours:</strong> Morning 9:00 AM – 5:00 PM (Monday to Friday)</p>
+      <p><small style="color: var(--text-muted);">*Live indicator reflects active office hours in IST.</small></p>
+    </div>
+  </section>
+
+  <!-- Course Outcomes -->
+  <section id="outcomes">
+    <h2>Course Outcomes</h2>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr><th>CO</th><th>Students will be able to</th><th>Bloom's Level</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>CO1</td><td>Explain programming fundamentals and basic Python syntax.</td><td>Understand</td></tr>
+          <tr><td>CO2</td><td>Apply Python data types, operators, and I/O to compute solutions.</td><td>Apply</td></tr>
+          <tr><td>CO3</td><td>Analyze problem statements and implement conditional and looping logic.</td><td>Analyze</td></tr>
+          <tr><td>CO4</td><td>Design modular programs using functions, recursion, and standard modules.</td><td>Create</td></tr>
+          <tr><td>CO5</td><td>Develop programs using data collections, string utilities, and file persistence.</td><td>Apply</td></tr>
+          <tr><td>CO6</td><td>Create robust applications utilizing exceptions and object-oriented principles.</td><td>Create</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Schedule with Live Search Filter -->
+  <section id="schedule">
+    <h2>Weekly Schedule &amp; Syllabus</h2>
+    <input type="text" id="scheduleSearch" class="search-input" placeholder="🔍 Filter topics, units, or practicals..." aria-label="Filter schedule">
+    <div class="scroll">
+      <table id="scheduleTable">
+        <thead>
+          <tr><th>Week</th><th>Unit and Topics</th><th>Practical</th><th>Evidence of Learning</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Unit 1: Programming basics, installation, IDEs, first script</td><td>Lab setup &amp; verification</td><td>Laptop runtime verification</td></tr>
+          <tr><td>2</td><td>Unit 1 &amp; 2: Syntax rules, indentation, identifiers, variables</td><td>Warm-up problems</td><td>Exit ticket 1</td></tr>
+          <tr><td>3</td><td>Unit 2: Type conversions, standard I/O, operators</td><td>Practical 1</td><td>Quiz 1</td></tr>
+          <tr><td>4</td><td>Unit 2 &amp; 3: Expressions, conditional execution (if, if-else)</td><td>Practical 2</td><td>Assignment 1 (Units 1-2)</td></tr>
+          <tr><td>5</td><td>Unit 3: Nested branching, for loops, range iteration</td><td>Mini-project roll-out</td><td>Output tracing worksheet</td></tr>
+          <tr><td>6</td><td>Unit 3: While loops, loop control (break, continue, pass)</td><td>Practical 3</td><td>Loop submission check</td></tr>
+          <tr><td>7</td><td>Unit 4: Functions, arguments, return mechanics, scopes</td><td>Practical 4</td><td>Mid-sem exam &amp; Assignment 2</td></tr>
+          <tr><td>8</td><td>Unit 4: Lambda functions, recursive calls, modules</td><td>Practical 9</td><td>Recursion simulator trace</td></tr>
+          <tr><td>9</td><td>Unit 5: Lists, tuples, sets, and dictionaries</td><td>Practical 5</td><td>Quiz 2</td></tr>
+          <tr><td>10</td><td>Unit 5: String methods, comprehensions, file introductions</td><td>Practical 6</td><td>Assignment 3 (Unit 4)</td></tr>
+          <tr><td>11</td><td>Unit 5 &amp; 6: File I/O operations, error structures</td><td>Practical 7</td><td>Exit ticket 2</td></tr>
+          <tr><td>12</td><td>Unit 6: Exception handling (try/except), classes &amp; instances</td><td>Practical 8</td><td>Assignment 4 (Unit 5)</td></tr>
+          <tr><td>13</td><td>Unit 6: Object constructors, review, and term viva</td><td>Mini-project evaluation</td><td>Survey &amp; Final Assignment</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Assessment -->
+  <section id="assessment">
+    <h2>Assessment Scheme</h2>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr><th>Assessment Component</th><th>Weightage</th><th>Evaluation Criteria</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Continuous Internal Evaluation (Theory)</td><td>50 Marks</td><td>Quizzes, assignments, and mid-term examination</td></tr>
+          <tr><td>Semester End Examination (Theory)</td><td>50 Marks</td><td>Comprehensive university end-term examination</td></tr>
+          <tr><td>Internal Practical Assessment</td><td>25 Marks</td><td>Lab continuous evaluation &amp; practical journal</td></tr>
+          <tr><td>External Practical Assessment</td><td>25 Marks</td><td>Capstone project execution, viva voce, and lab demo</td></tr>
+          <tr><td><strong>Total</strong></td><td><strong>150 Marks</strong></td><td><strong>Minimum passing aggregate: 54 Marks (36%)</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Interactive Lab Feature -->
+  <section id="playground">
+    <h2>Quick Python Playground</h2>
+    <div class="playground-box">
+      <p style="margin-top: 0; font-size: 0.9rem; color: var(--text-muted);">Test quick logic statements or run starter code in real-time:</p>
+      <textarea id="codeEditor" class="code-area"># Quick interactive runner
+radius = 7
+area = 3.14159 * (radius ** 2)
+print("Radius:", radius)
+print("Calculated Area:", round(area, 2))
+</textarea>
+      <br>
+      <button class="btn-run" onclick="runMiniCode()">▶ Run Snippet</button>
+      <div id="codeOutput" class="output-box">// Output terminal will appear here...</div>
+    </div>
+  </section>
+
+  <!-- Resources -->
+  <section id="resources">
+    <h2>Learning Resources</h2>
+    <div class="card">
+      <ul style="margin-bottom: 12px;">
+        <li><a href="https://docs.python.org/3/" target="_blank" rel="noopener">Official Python 3 Documentation</a></li>
+        <li><a href="https://realpython.com/" target="_blank" rel="noopener">Real Python Practical Tutorials</a></li>
+        <li><a href="https://www.w3schools.com/python/" target="_blank" rel="noopener">W3Schools Interactive Python</a></li>
+      </ul>
+      <p><strong>Primary Textbook:</strong> Reema Thareja, <em>Python Programming Using Problem Solving Approach</em>, Oxford University Press.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="w">
+    Introduction to Python Programming (102040306) &middot; CVM University &middot; Active Academic Session 2025–26
+  </div>
+</footer>
+
+<script>
+// Office hours live indicator (9:00 AM - 5:00 PM)
+function updateOfficeStatus() {
+  const badge = document.getElementById('statusBadge');
+  const text = document.getElementById('statusText');
+  const dot = badge.querySelector('.dot');
+  
+  const now = new Date();
+  const day = now.getDay(); // 0 = Sun, 6 = Sat
+  const hour = now.getHours();
+  
+  // Mon-Fri: 9:00 AM to 5:00 PM (17:00)
+  const isWeekday = day >= 1 && day <= 5;
+  const isOfficeHours = hour >= 9 && hour < 17;
+  
+  if (isWeekday && isOfficeHours) {
+    badge.className = 'faculty-badge online';
+    dot.className = 'dot online';
+    text.textContent = 'Available Now (Office Hours)';
+  } else {
+    badge.className = 'faculty-badge offline';
+    dot.className = 'dot offline';
+    text.textContent = 'Currently Offline (9 AM – 5 PM Mon-Fri)';
+  }
+}
+updateOfficeStatus();
+setInterval(updateOfficeStatus, 60000);
+
+// Search and filter for the weekly syllabus
+document.getElementById('scheduleSearch').addEventListener('input', function(e) {
+  const query = e.target.value.toLowerCase();
+  const rows = document.querySelectorAll('#scheduleTable tbody tr');
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(query) ? '' : 'none';
+  });
+});
+
+// Dark/Light Mode Toggle
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  const target = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', target);
+  localStorage.setItem('theme', target);
+});
+
+if (localStorage.getItem('theme') === 'dark') {
+  document.documentElement.setAttribute('data-theme', 'dark');
+}
+
+// Mini Python Playground Runner (Simulation Engine)
+function runMiniCode() {
+  const code = document.getElementById('codeEditor').value;
+  const out = document.getElementById('codeOutput');
+  
+  // Safe JS emulation for basic pythonic expressions & print statements
+  let logs = [];
+  try {
+    const lines = code.split('\n');
+    let scope = {};
+    lines.forEach(line => {
+      let trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) return;
+      
+      if (trimmed.startsWith('print(') && trimmed.endsWith(')')) {
+        let content = trimmed.slice(6, -1);
+        let evaluated = evalWithScope(content, scope);
+        logs.push(evaluated);
+      } else if (trimmed.includes('=')) {
+        let parts = trimmed.split('=');
+        let varName = parts[0].trim();
+        let expression = parts.slice(1).join('=').trim().replace(/\*\*/g, '**');
+        scope[varName] = evalWithScope(expression, scope);
+      }
+    });
+    out.textContent = logs.length > 0 ? logs.join('\n') : "Script executed successfully (no print outputs).";
+  } catch (err) {
+    out.textContent = "Syntax / Runtime Note: Ensure code uses simple print() and standard assignments in preview mode.";
+  }
+}
+
+function evalWithScope(expr, scope) {
+  const keys = Object.keys(scope);
+  const values = Object.values(scope);
+  const cleaner = expr.replace(/\*\*/g, '**').replace(/round\(/g, 'Math.round(');
+  return new Function(...keys, `return ${cleaner};`)(...values);
+}
+</script>
+
+</body>
+</html>
