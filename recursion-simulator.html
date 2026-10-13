@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recursion Call-Stack Simulator</title>
+<style>
+:root{--navy:#1B2A6B;--amber:#E8A200;--teal:#1A8A84;--bg:#f7f8fb;--ink:#1d2433;--line:#d9deea}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+header{background:var(--navy);color:#fff;padding:18px 16px}header h1{margin:0;font-size:1.4rem}header p{margin:4px 0 0;opacity:.9}
+main{max-width:980px;margin:auto;padding:12px 16px 40px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:12px 0}
+h2{font-size:1.05rem;color:var(--navy);margin:0 0 8px}
+label{font-weight:600;margin-right:6px}
+select,input,button{font:inherit;padding:7px 10px;border:1px solid #aab3c8;border-radius:6px;background:#fff}
+button{background:var(--navy);color:#fff;border-color:var(--navy);cursor:pointer}button.alt{background:#fff;color:var(--navy)}
+button:disabled{opacity:.45;cursor:default}
+button:focus,select:focus,input:focus{outline:3px solid var(--amber);outline-offset:1px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:720px){.grid{grid-template-columns:1fr}}
+pre{margin:0;font-family:Consolas,monospace;font-size:.92rem;background:#f3f3f3;padding:8px;border-radius:6px;overflow-x:auto}
+.line{display:block;padding:1px 6px;border-left:4px solid transparent}.line.on{background:#FFF4D6;border-left-color:var(--amber)}
+#stack{display:flex;flex-direction:column-reverse;gap:6px;min-height:220px;border-bottom:4px solid var(--navy);padding-bottom:6px}
+.frame{border:2px solid var(--navy);border-radius:6px;padding:6px 10px;background:#EAF1FA;font-family:Consolas,monospace;animation:pop .25s}
+.frame.top{border-color:var(--amber);background:#FFF4D6}.frame.ret{border-color:var(--teal);background:#DFF3F1}
+@keyframes pop{from{transform:translateY(-10px);opacity:0}to{transform:none;opacity:1}}
+@media(prefers-reduced-motion:reduce){.frame{animation:none}}
+#log{max-height:160px;overflow:auto;font-size:.92rem;margin:0;padding-left:18px}
+.msg{min-height:1.4em;font-weight:600}.ok{color:var(--teal)}.no{color:#C0392B}
+.small{font-size:.88rem;color:#555}
+</style>
+</head>
+<body>
+<header><h1>Recursion call-stack simulator</h1><p>Introduction to Python Programming (102040306) &middot; Unit 4: functions and recursion</p></header>
+<main>
+<div class="panel"><h2>1. Choose a function and an input</h2>
+<label for="fn">Function</label>
+<select id="fn"><option value="fact">factorial(n)</option><option value="fib">fibonacci(n)</option><option value="dsum">digit_sum(n)</option></select>
+<label for="n" style="margin-left:10px">n</label><input id="n" type="number" value="4" min="1" max="30" style="width:80px">
+<button id="start">Load</button>
+<p class="small">Fibonacci is limited to n = 6 so the stack stays readable. Factorial is limited to n = 7.</p></div>
+
+<div class="panel"><h2>2. Predict first</h2>
+<label for="pred">What will the function return?</label><input id="pred" type="number" style="width:120px">
+<button id="check">Check my prediction</button>
+<p class="msg" id="predmsg" aria-live="polite"></p>
+<p class="small">Also predict: how many times will the function be called? <input id="callpred" type="number" style="width:80px"> <button class="alt" id="check2">Check</button> <span class="msg" id="callmsg" aria-live="polite"></span></p></div>
+
+<div class="grid">
+<div class="panel"><h2>Code</h2><pre id="code" aria-label="Python code"></pre>
+<p style="margin:10px 0 0"><button id="step">Step</button> <button class="alt" id="auto">Auto-play</button> <button class="alt" id="reset">Reset</button></p>
+<p class="small" id="status" aria-live="polite">Load a function to begin.</p></div>
+<div class="panel"><h2>Call stack (top is the active call)</h2><div id="stack" aria-live="polite"></div></div></div>
+
+<div class="panel"><h2>What just happened</h2><ol id="log"></ol></div>
+<div class="panel"><h2>Name the idea</h2>
+<p id="idea" class="small">Run the simulation first. Each call waits on the stack until the call it made returns. The formal name for this idea is recursion, and the call that stops the chain is the base case.</p></div>
+</main>
+<script>
+const CODE={
+fact:["def factorial(n):","    if n <= 1:","        return 1","    return n * factorial(n - 1)"],
+fib:["def fibonacci(n):","    if n <= 1:","        return n","    return fibonacci(n - 1) + fibonacci(n - 2)"],
+dsum:["def digit_sum(n):","    if n < 10:","        return n","    return n % 10 + digit_sum(n // 10)"]};
+const LIMIT={fact:7,fib:6,dsum:99999};
+let events=[],pos=0,timer=null,calls=0,result=0,fnName="";
+const $=id=>document.getElementById(id);
+function build(kind,n){
+  events=[];calls=0;let id=0;
+  function run(k,x,depth){
+    const me=++id;calls++;
+    events.push({t:"call",id:me,x,depth,line:0,txt:`${fnName}(${x}) is called and placed on the stack.`});
+    let r;
+    if((k==="dsum"&&x<10)||(k!=="dsum"&&x<=1)){
+      r=(k==="fact")?1:x;
+      events.push({t:"base",id:me,x,line:1,txt:`Base case reached for ${x}: it can answer without calling again.`});
+      events.push({t:"ret",id:me,x,val:r,line:2,txt:`${fnName}(${x}) returns ${r} and leaves the stack.`});
+      return r;}
+    if(k==="fact"){const s=run(k,x-1,depth+1);r=x*s;}
+    else if(k==="fib"){const a=run(k,x-1,depth+1);const b=run(k,x-2,depth+1);r=a+b;}
+    else{const s=run(k,Math.floor(x/10),depth+1);r=x%10+s;}
+    events.push({t:"ret",id:me,x,val:r,line:3,txt:`${fnName}(${x}) combines the answer it was waiting for and returns ${r}.`});
+    return r;}
+  return run(kind,n,0);}
+function render(){
+  const stack=[];
+  for(let i=0;i<pos;i++){const e=events[i];
+    if(e.t==="call")stack.push({id:e.id,x:e.x,state:"waiting"});
+    if(e.t==="ret"){const j=stack.findIndex(s=>s.id===e.id);stack.splice(j,1);}}
+  const cur=pos>0?events[pos-1]:null;
+  $("stack").innerHTML=stack.map((s,i)=>`<div class="frame ${i===stack.length-1&&!(cur&&cur.t==='ret')?'top':''}">${fnName}(n=${s.x})</div>`).join("")||'<span class="small">stack is empty</span>';
+  if(cur&&cur.t==="ret")$("stack").insertAdjacentHTML("beforeend",`<div class="frame ret">returned ${cur.val}</div>`);
+  const lines=CODE[$("fn").value];
+  $("code").innerHTML=lines.map((l,i)=>`<span class="line ${cur&&cur.line===i?'on':''}">${l.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</span>`).join("");
+  $("log").innerHTML=events.slice(0,pos).map(e=>`<li>${e.txt}</li>`).join("");
+  $("log").scrollTop=1e6;
+  $("status").textContent=pos===0?"Ready. Press Step.":pos>=events.length?`Finished. Result = ${result}, total calls = ${calls}.`:`Step ${pos} of ${events.length}`;
+  $("step").disabled=pos>=events.length;
+  if(pos>=events.length&&events.length)$("idea").textContent="This pattern, where a function solves a smaller copy of the same problem until a base case stops it, is called recursion. The frames you saw piling up are the call stack.";}
+function load(){
+  stop();let n=parseInt($("n").value,10);const k=$("fn").value;
+  if(isNaN(n)||n<1){n=1}
+  if(n>LIMIT[k]){n=LIMIT[k]}
+  $("n").value=n;
+  fnName={fact:"factorial",fib:"fibonacci",dsum:"digit_sum"}[k];
+  result=build(k,n);pos=0;
+  $("predmsg").textContent="";$("callmsg").textContent="";$("pred").value="";$("callpred").value="";
+  render();}
+function stop(){if(timer){clearInterval(timer);timer=null;$("auto").textContent="Auto-play"}}
+$("start").onclick=load;$("fn").onchange=load;$("reset").onclick=load;
+$("step").onclick=()=>{if(pos<events.length){pos++;render();}};
+$("auto").onclick=()=>{if(timer){stop();return}$("auto").textContent="Pause";
+  timer=setInterval(()=>{if(pos>=events.length){stop();return}pos++;render();},800);};
+$("check").onclick=()=>{const v=parseInt($("pred").value,10);const m=$("predmsg");
+  if(isNaN(v)){m.textContent="Type a number first.";m.className="msg";return}
+  if(v===result){m.textContent="Correct. Step through to see how the stack builds that answer.";m.className="msg ok"}
+  else{m.textContent="Not quite. Step through and watch which values come back up the stack, then try again.";m.className="msg no"}};
+$("check2").onclick=()=>{const v=parseInt($("callpred").value,10);const m=$("callmsg");
+  if(isNaN(v)){m.textContent="Type a number first.";m.className="msg";return}
+  if(v===calls){m.textContent="Correct.";m.className="msg ok"}else{m.textContent="Not quite. Count every call, including the base cases.";m.className="msg no"}};
+load();
+</script>
+</body></html>
